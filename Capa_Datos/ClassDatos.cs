@@ -37,13 +37,21 @@ namespace Capa_Datos
 
         public String D_mantenimiento_clientes(ClassEntidad obje)
         {
+            String accion = "";
             SqlCommand cmd = new SqlCommand("sp_mantenimiento_clientes", cn);
             cmd.CommandType= CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@codigo", obje.codigo);
-            cmd.Parameters.AddWithValue("@nombre", obje.codigo);
-            cmd.Parameters.AddWithValue("@edad", obje.codigo);
-            cmd.Parameters.AddWithValue("@telefono", obje.codigo);
-            cmd.Parameters.AddWithValue("@accion", SqlDbType.VarChar, 50).Value = obje.accion;
+            cmd.Parameters.AddWithValue("@nombre", obje.nombre);
+            cmd.Parameters.AddWithValue("@edad", obje.edad);
+            cmd.Parameters.AddWithValue("@telefono", obje.telefono);
+            cmd.Parameters.Add("@accion", SqlDbType.VarChar, 50).Value = obje.accion;
+            cmd.Parameters["@accion"].Direction = ParameterDirection.InputOutput;
+            if (cn.State == ConnectionState.Open) cn.Close();
+            cn.Open();
+            cmd.ExecuteNonQuery();
+            accion = cmd.Parameters["@accion"].Value.ToString();
+            cn.Close();
+            return accion;
         }
     }
 }
